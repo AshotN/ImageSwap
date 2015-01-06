@@ -1,0 +1,21 @@
+doctype html
+html
+	head
+		title ImageSwap
+		link(href='../css/main.css', rel='stylesheet')
+		link(href='http://fonts.googleapis.com/css?family=Roboto:400,100,300', rel='stylesheet', type='text/css')
+	body
+		header 
+			div.title Admin - Login
+
+		.main
+			if message
+				.message #{message}
+			.login.center
+				form(name="formlogon" method="POST" id="loginform")
+					input(placeholder="Username" required name="username" class="loginitem" id="username")
+					br
+					input(type="password" placeholder="Password" required name="password" class="loginitem" id="password")
+					br
+					input(type="submit" id="submitlogin" class="button" value="Login")
+		

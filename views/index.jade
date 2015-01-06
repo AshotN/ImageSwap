@@ -1,0 +1,14 @@
+doctype html
+html
+	head
+		title ImageSwap
+		link(href='css/main.css', rel='stylesheet')
+		link(href='http://fonts.googleapis.com/css?family=Roboto:400,100,300', rel='stylesheet', type='text/css')
+	body
+		header 
+			div.title #{todayslash}
+		
+		div.main
+			div.center
+				img.todayImage(src="img/images/#{today}.webp" onerror="this.onerror=null; this.src='img/images/#{today}.jpg'")
+				
