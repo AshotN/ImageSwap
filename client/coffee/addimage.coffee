@@ -42,6 +42,7 @@ $(document).ready ->
 			$("#message").delay(timeout).animate
 				opacity: "0"
 			, 700, ->
+				$("#message").css "display", "none"
 
 	checkExt = (ext, cb) ->
 		if(allowedFileTypes.indexOf(ext) > -1)
@@ -203,6 +204,7 @@ $(document).ready ->
 			return
 
 	$("#upload").on "click",(e) ->
+		console.log "NO"
 		e.preventDefault()
 		if uploadImages.length == 0
 			return showMessage "No Images Too Upload", true, 1000

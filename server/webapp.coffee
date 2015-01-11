@@ -23,8 +23,8 @@ app.get '/', (req, res) ->
 	Image.findOne {'date': date}, (err, item) ->
 		return res.status(500).json err if err?
 		if item?
-			return res.render 'index', today: date, image: item.name
-		return res.render 'index', today: date
+			return res.render 'index', today: date, image: item.name, user: req.user?
+		return res.render 'index', today: date, user: req.user?
 		
 #########
 # Admin #
@@ -46,7 +46,7 @@ app.get '/admin/login', (req, res) ->
 		res.redirect '/admin/logout'
 	res.render 'admin/login'
 
-app.get 'admin/logout', (req, res) ->
+app.get '/admin/logout', (req, res) ->
 	req.logout()
 	res.redirect '/'
 

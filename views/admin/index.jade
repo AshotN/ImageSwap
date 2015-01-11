@@ -17,10 +17,11 @@ html
 		.cover
 		header 
 			div.title Admin - Index
-
+			a(href='/admin/manage').menuoption Manage
+			a(href='/admin/logout').menuoption Logout
+			a(href='/').menuoption Return
 		.main
 			div.center
-				a(href='./manage').button#linkButton Manage
 				div.form
 					form.additemform(method="post")
 						div.images
