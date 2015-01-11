@@ -8,17 +8,32 @@ $(document).ready ->
 	month = date.getMonth()+1
 	year = date.getFullYear()
 
-	date = month+"-"+day+"-"+year
+	date = month+"/"+day+"/"+year
 
-
+	date = moment(date).format("M/D/YYYY");
 
 	allowedFileTypes = ['png', 'jpg', 'jpeg']
 
 	uploadImages = []
 
 	showMessage = (message, error, timeout=60000) ->
-		$("body").append("<div id='message'><div id='messagetext'></div></div>")
-		$("#message").addClass "error"	if error
+
+		if $("#messagetext").html() != message #
+			console.log "Remve"
+			$("#message").remove()
+
+
+		if $("#message").length == 0 #Doesn't exist, make it
+			$("body").append("<div id='message'><div id='messagetext'></div></div>")
+
+		#IF error or not
+		if error and not $("#message").hasClass("error")
+			$("#message").addClass "error"	if error
+		if not error and $("#message").hasClass("error")
+			$("#message").removeClass("error")
+
+
+		#Show
 		$("#messagetext").html message
 		$("#message").css "display", "block"
 		$("#message").animate
@@ -27,15 +42,6 @@ $(document).ready ->
 			$("#message").delay(timeout).animate
 				opacity: "0"
 			, 700, ->
-				removeMessage()
-
-	removeMessage = ->
-		$("#message").remove()
-	stopMessage = ->
-		$("#message").clearQueue()
-				
-
-
 
 	checkExt = (ext, cb) ->
 		if(allowedFileTypes.indexOf(ext) > -1)
@@ -59,7 +65,6 @@ $(document).ready ->
 		
 	socket.on 'reconnect', (socket) ->
 		console.log "RECONNECTEd"
-		removeMessage()
 		showMessage("Connected", false, 1000)
 		$("#upload").prop('disabled', false);
 
@@ -125,6 +130,7 @@ $(document).ready ->
 					ctx.drawImage(image, 0, 0, this.width, this.height);
 
 					uploadImages.push([canvas.toDataURL("image/jpeg", 1), date])
+					date = moment(date).add(1, 'd').format("M/D/YYYY");
 					console.log uploadImages
 			$(".cover").fadeOut()
 			return 	
@@ -151,7 +157,8 @@ $(document).ready ->
 	$(".images").on 'click', '.rright', -> 
 		canvasnum = $(this).data('canvasnum')
 		canvas = $("#canvas#{canvasnum}")[0]
-		console.log canvasnum, canvas
+		#console.log canvasnum, canvas
+		console.log "RIGHT"
 		ctx = canvas.getContext("2d");
 
 		image = new Image();
@@ -166,8 +173,9 @@ $(document).ready ->
 			ctx.rotate(90 * Math.PI/180);
 			ctx.drawImage(data, -(data.width/2), -(data.height/2), data.width, data.height);
 
-			uploadImages[0] = ([canvas.toDataURL("image/jpeg", 1), uploadImages[0][1]])
-			console.log uploadImages
+			uploadImages[canvasnum] = ([canvas.toDataURL("image/jpeg", 1), uploadImages[canvasnum][1]])
+
+
 			$("#tools#{canvasnum}").width(canvas.width)
 			return
 
@@ -189,8 +197,8 @@ $(document).ready ->
 			ctx.rotate(-90 * Math.PI/180);
 			ctx.drawImage(data, -(data.width/2), -(data.height/2), data.width, data.height);
 
-			uploadImages[0] = ([canvas.toDataURL("image/jpeg", 1), uploadImages[0][1]])
-			
+			uploadImages[canvasnum] = ([canvas.toDataURL("image/jpeg", 1), uploadImages[canvasnum][1]])
+	
 			$("#tools#{canvasnum}").width(canvas.width)
 			return
 
@@ -198,13 +206,11 @@ $(document).ready ->
 		e.preventDefault()
 		if uploadImages.length == 0
 			return showMessage "No Images Too Upload", true, 1000
-		socket.emit "imageupload",
-			images: uploadImages
-		, (result) ->
+		socket.emit "imageupload", images: uploadImages, (result) ->
 			console.log 1, result
 			$("html, body").animate	scrollTop: 0, "slow"
 			if result.status
-				console.log "YES"
+				console.log "YES", uploadImages
 				showMessage result.message, false, 5000
 			else
 				console.log "NOPE"

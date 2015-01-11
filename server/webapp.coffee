@@ -9,7 +9,7 @@ passport = require './passport'
 
 
 User = db.models.User
-
+Image = db.models.Image
 
 app.get '/', (req, res) ->
 	date = new Date()
@@ -18,13 +18,28 @@ app.get '/', (req, res) ->
 	month = date.getMonth()+1
 	year = date.getFullYear()
 
-	date = month+"-"+day+"-"+year
-	dateSlash = month+"/"+day+"/"+year
-	res.render 'index', today: date, todayslash: dateSlash
+	date = month+"/"+day+"/"+year
+
+	Image.findOne {'date': date}, (err, item) ->
+		return res.status(500).json err if err?
+		if item?
+			return res.render 'index', today: date, image: item.name
+		return res.render 'index', today: date
+		
+#########
+# Admin #
+#########
 
 app.get '/admin', (req, res) ->
 	return res.redirect '/admin/login' unless req.user?
 	res.render 'admin/index'
+
+app.get '/admin/manage', (req, res) ->
+	return res.redirect '/admin/login' unless req.user?
+
+	Image.find {},{_id: 0, name: 1, date: 1}, (err, item) ->
+		res.render 'admin/manage', allImages: item
+
 
 app.get '/admin/login', (req, res) ->
 	if req.user 

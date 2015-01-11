@@ -6,9 +6,11 @@ html
 		link(href='http://fonts.googleapis.com/css?family=Roboto:400,100,300', rel='stylesheet', type='text/css')
 	body
 		header 
-			div.title #{todayslash}
+			div.title #{today}
 		
 		div.main
 			div.center
-				img.todayImage(src="img/images/#{today}.webp" onerror="this.onerror=null; this.src='img/images/#{today}.jpg'")
-				
+				if image
+					img.todayImage(src='img/images/#{image}')
+				else
+					span.title No Image Today :(
