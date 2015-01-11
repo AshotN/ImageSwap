@@ -47,10 +47,6 @@
 	float: right;
 	bottom: 35px;
 
-//#calendar 
-//	position relative
-//	bottom 60px
-
 #message
 	background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.3);
 	width: 100%;
@@ -77,7 +73,7 @@
 	width 45%
 	transition: transform 0.2s
 	&:hover
-		transform:scale(2)
+		transform:scale(1.2)
 		transition: transform 0.2s
 
 	
@@ -89,3 +85,9 @@
 .fc
 	text-align center !important
 	
+.fc td, .fc th 
+	border-width: 3px !important
+	
+.fc-toolbar .fc-right 
+	position absolute
+	right 20px
