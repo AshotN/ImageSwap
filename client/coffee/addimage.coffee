@@ -16,11 +16,12 @@ $(document).ready ->
 
 	uploadImages = []
 
+	deleteMessage = ->
+		$("#message").remove()
 	showMessage = (message, error, timeout=60000) ->
 
-		if $("#messagetext").html() != message #
-			console.log "Remve"
-			$("#message").remove()
+		if $("#messagetext").html() != message
+			deleteMessage()
 
 
 		if $("#message").length == 0 #Doesn't exist, make it
@@ -204,19 +205,36 @@ $(document).ready ->
 			return
 
 	$("#upload").on "click",(e) ->
-		console.log "NO"
 		e.preventDefault()
 		if uploadImages.length == 0
 			return showMessage "No Images Too Upload", true, 1000
-		socket.emit "imageupload", images: uploadImages, (result) ->
-			console.log 1, result
+
+
+		socket.emit "imageUpload", images: uploadImages, (result) ->
+			showMessage "Uploading...", false, 15000
 			$("html, body").animate	scrollTop: 0, "slow"
 			if result.status
-				console.log "YES", uploadImages
-				showMessage result.message, false, 5000
+				return showMessage result.message, false, 5000
 			else
-				console.log "NOPE"
-				showMessage "Failed: " + result.message, true, 5000
+				if result.overwriteDate?
+					deleteMessage()
+					if confirm("Overwite Image on Date: #{result.overwriteDate}")
+						console.log "OVERWRITE"
+						socket.emit "imageDelete", date: result.overwriteDate, (result) ->
+							if result.status
+								socket.emit "imageUpload", images: uploadImages, (result) ->
+									if result.status
+										console.log "Overwritten"
+										return showMessage result.message, false, 5000
+									else
+										console.log "FAILED??? #{result.message}"
+										#return showMessage "Failed: " + result.message, true, 5000
+										#TODO... this error gets thrown even if nothing went wrong... possible fix is make an imageOverwite instead of using imageDelete and imageUpload...
+							else
+								return showMessage "Failed: " + result.message, true, 5000
+				else	
+					console.log 'problem'
+					return showMessage "Failed: " + result.message, true, 5000
 			return
 
 

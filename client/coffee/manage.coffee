@@ -33,14 +33,31 @@ $(document).ready ->
 
 
 	for i in [0...allImages.length]
-		allImages[i].title = "<img class='qtip-image' src='../../img/images/#{name}'>"
 		allImages[i].start = allImages[i].date;
 		delete allImages[i].date;
+
 	
-	console.log allImages
+	$(document).on 'click', '.trash', -> 
+		truelythis = $(this) #CAUSE JAVASCRIPT
+		date = $(truelythis).data('date')
+		#console.log $(truelythis).parent().parent()[0]
+		socket.emit "imageDelete", date: date, (result) ->
+			if result.status
+				#$("#calendar").fullCalendar
+				#	removeEvents: $(truelythis).parent().parent().parent().parent()[0]
+				#console.log 5, allImages
+				#for i in [0...allImages.length]
+				#	if(allImages[i].start == date)
+				#		allImages = allImages.splice(i, 1) 
+				$(truelythis).parent().parent().parent().parent().removeClass('fc-event-container')
+				$(truelythis).parent().parent().parent().parent().empty()
+				#TODO After delete you cant drag image on deleted spot... need to fix... to tirredd
+				window.location.reload() #the shitty fix is real
+				return showMessage result.message, false, 5000
+			else
+				return showMessage "Failed: " + result.message, true, 5000
 
 	$("#calendar").fullCalendar
-		height: 1100
 		editable: true
 		allDayDefault: true
 		eventOverlap: false
@@ -51,8 +68,12 @@ $(document).ready ->
 
 
 		eventRender: (event, element) ->
-			console.log event
-			element.find('.fc-title').html("<img class='calendar-image' src='../../img/images/#{event.name}'>");
+			element.find('.fc-title').html("<img class='calendar-image' src='../../img/images/#{event.name}'><div class='trash' data-date='#{event.start._i}'>");
+			console.log element[0]
+			#element.find(document).on 'click', '.trash', -> 
+			#	console.log "A"
+			#	$('#calendar').fullCalendar('removeEvents',event._id);
+				
 
 		eventDrop: (event, delta, evertFunc) ->
 			console.log 1, event
@@ -71,7 +92,6 @@ $(document).ready ->
 		#	element.find('.fc-title').html("a<img class='qtip-image' src='../../img/images/#{event.name}'>");
 
 	socket.on 'connect_error', (socket) ->
-		console.log "NOO"
 		showMessage("Lost Connection To Server", true, 60000)
 		$("#upload").prop('disabled', true);
 

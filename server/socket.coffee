@@ -30,7 +30,7 @@ ensureExists = (path, mask = 0o744, cb) ->
 
 
 io.on 'connection', (socket) ->
-	socket.on 'imageupload', (data, cb) ->
+	socket.on 'imageUpload', (data, cb) ->
 		
 		data.images.forEach (item, count) ->
 			if(item?)
@@ -57,6 +57,9 @@ io.on 'connection', (socket) ->
 
 						image.save (err) ->
 							if(err?)
+								if err.toString().indexOf("duplicate key error") > -1
+									date = err.err.match("[1-9]{1,2}/[1-9]{1,2}/[0-9]{4}")
+									return cb status: false, message: "Already Item on Selected Date...#{date}", overwriteDate: date
 								return cb status: false, message: "Failed To Add Item To DB"
 							return cb status: true, message: "Image(s) Uploaded"
 	
@@ -66,3 +69,7 @@ io.on 'connection', (socket) ->
 			return cb status: false, message: "Error: #{err}" if err?
 			return cb status: true, message: "Updated"
 
+	socket.on 'imageDelete', (data, cb) ->
+		Image.remove {date: data.date}, (err) ->
+			return cb status: false, message: "Error: #{err}" if err?
+			return cb status: true, message: "Image Deleted"

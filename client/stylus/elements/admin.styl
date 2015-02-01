@@ -45,7 +45,7 @@
 	position: relative;
 	font-size: 22px;
 	float: right;
-	bottom: 35px;
+	bottom: 30px;
 
 #message
 	background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.3);
@@ -65,6 +65,15 @@
 .error
 	background: none repeat scroll 0% 0% rgba(255, 0, 0, 0.28) !important;
 	
+.trash
+	position: absolute;
+	width: 32px;
+	top: 4px;
+	height: 32px;
+	background-image: url(../img/trash.png);
+	cursor pointer
+	&:active
+		background-color red
 	
 .fc td, .fc th 
 	background-color white
@@ -91,3 +100,12 @@
 .fc-toolbar .fc-right 
 	position absolute
 	right 20px
+	
+.fc-basic-view td.fc-day-number, .fc-basic-view td.fc-week-number span
+		font-family Roboto
+		font-size: 22px;
+		font-weight: 100;
+
+.fc-event
+	background-color transparent !important
+	border none !important
