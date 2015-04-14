@@ -77,7 +77,7 @@ app.post '/admin/login', (req, res, next) ->
 
 
 app.get '*', (req, res) ->
-	res.render '404'
+	res.status(404).render '404'
 
 process.on "uncaughtException", (err) ->
 	if err.errno is "EADDRINUSE"
