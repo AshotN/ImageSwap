@@ -53,7 +53,7 @@ app.get '/admin/logout', (req, res) ->
 app.post '/admin/login', (req, res, next) ->
 	#return res.status(500).json unless req.body
 	User.count {}, (err, countout) ->
-		#Need error handling
+		return res.render "admin/login", message: "Error Occured: Failed to Get User Count" if err?
 		count = countout
 		if(count == 0)
 			user = new User
@@ -61,7 +61,7 @@ app.post '/admin/login', (req, res, next) ->
 				password: req.body.password
 
 			user.save (err, user) ->
-				#Need error handling
+				return res.render "admin/login", message: "Error Occured: Failed To Create User" if err?
 				console.log "Admin Account Created"
 				return res.render "admin/login", message: "Admin Account Created"
 		else
